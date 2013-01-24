@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 
 from pprint import pprint
 from pyes import *
