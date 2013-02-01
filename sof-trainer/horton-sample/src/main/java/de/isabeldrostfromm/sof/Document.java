@@ -13,6 +13,7 @@ import lombok.ToString;
 @ToString
 public class Document {
 	@NonNull @Getter private String body;
+	@NonNull @Getter private String state;
 	@NonNull @Getter private String title;
 	@NonNull @Getter private double reputation;
 	@NonNull @Getter private Set<String> tags;

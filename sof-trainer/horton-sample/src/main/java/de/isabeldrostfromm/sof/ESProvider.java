@@ -25,18 +25,20 @@ import com.google.common.base.Preconditions;
 import com.google.gson.internal.StringMap;
 
 @Log4j
+@SuppressWarnings("rawtypes")
 public class ESProvider implements DocumentProvider, Closeable {
 
 	private JestClient client;
-	private boolean onlyOpen;
+	private String field;
+	private String value;
 	private int start = 0;
 	private int total = 10;
 	
-	public static ESProvider defaultInstance(boolean onlyOpen) {
-		return pagedInstance(onlyOpen, 0, 10);
+	public static ESProvider defaultInstance(String field, String value) {
+		return pagedInstance(field, value, 0, 10);
 	}
 
-	public static ESProvider pagedInstance(boolean onlyOpen, int start, int total) {
+	public static ESProvider pagedInstance(String field, String value, int start, int total) {
 		ClientConfig conf = new ClientConfig();
 		LinkedHashSet<String> set = new LinkedHashSet<String>();
 		set.add("http://localhost:9200");
@@ -45,12 +47,13 @@ public class ESProvider implements DocumentProvider, Closeable {
 		JestClientFactory factory = new JestClientFactory();
 		factory.setClientConfig(conf);
 		JestClient client = factory.getObject();
-		return new ESProvider(client, onlyOpen, start, total); 
+		return new ESProvider(client, field, value, start, total); 
 	}
 	
-	private ESProvider(JestClient client, boolean onlyOpen, int start, int total) {
+	private ESProvider(JestClient client, String field, String value, int start, int total) {
 		this.client = client;
-		this.onlyOpen = onlyOpen;
+		this.field = field;
+		this.value = value;
 		this.start = start;
 		this.total = total;
 	}
@@ -66,13 +69,8 @@ public class ESProvider implements DocumentProvider, Closeable {
 	@Override
 	public Iterator<Document> iterator() {
 		QueryBuilder qbuilder = null;
-		if (onlyOpen) {
-			//qbuilder = QueryBuilders.termQuery("open_status", "open");			
-			qbuilder = QueryBuilders.termQuery("body", "java");
-		} else {
-			//qbuilder = QueryBuilders.boolQuery().mustNot(QueryBuilders.termQuery("open_status", "open"));
-			qbuilder = QueryBuilders.boolQuery().mustNot(QueryBuilders.termQuery("body", "java"));
-		}
+		//qbuilder = QueryBuilders.termQuery(field, value);
+		qbuilder = QueryBuilders.boolQuery().mustNot(QueryBuilders.termQuery(field, value));
 
 		// TODO retrieve more than just top 10 results
 		Search search = new Search(Search.createQueryWithBuilder(qbuilder.toString()));
@@ -85,6 +83,7 @@ public class ESProvider implements DocumentProvider, Closeable {
 		} catch (Exception e) {
 			return new ESDocumentIterator(new HashMap<String, StringMap>());
 		}
+		@SuppressWarnings("unchecked")
 		ESDocumentIterator iter = new ESDocumentIterator(result.getJsonMap());
 		return iter;
 	}
@@ -95,6 +94,7 @@ public class ESProvider implements DocumentProvider, Closeable {
 		private int cursor = -1;
 		private Document parsed;
 
+		@SuppressWarnings("unchecked")
 		public ESDocumentIterator(Map<String, StringMap> result) {
 			Preconditions.checkNotNull(result);
 
@@ -123,7 +123,9 @@ public class ESProvider implements DocumentProvider, Closeable {
 				String tag4 = (String) srcDoc.get("tag_4");
 				String tag5 = (String) srcDoc.get("tag_5");
 				Set<String> tags = Sets.newHashSet(tag1, tag2, tag3, tag4, tag5);
-				return Document.of(body, title, reputation, tags);
+				
+				String state = (String) srcDoc.get("open_status");
+				return Document.of(body, state, title, reputation, tags);
 				
 			}
 			return null;
