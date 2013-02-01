@@ -3,6 +3,7 @@
 from pprint import pprint
 from pyes import *
 import csv
+import string
 
 # for the sample we want to clear the index before indexing again
 conn = ES('http://127.0.0.1:9200')
@@ -34,9 +35,9 @@ with open('../train-sample', 'rt') as csvfile:
         "tag_4": tag_4,
         "tag_5": tag_5,
         "post_closed_date": post_closed_date,
-        "open_status": open_status}
+        "open_status": string.replace(open_status, " ", "_")}
+    print "Indexing"
     print counter
-    print "Updating document"
     print post_id
     conn.index(document, "sof-sample", counter)
     counter = counter + 1
