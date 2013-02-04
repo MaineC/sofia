@@ -1,34 +1,31 @@
 package de.isabeldrostfromm.sof;
 
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.JestResult;
-import io.searchbox.client.config.ClientConfig;
-import io.searchbox.client.config.ClientConstants;
-import io.searchbox.core.Search;
-
-import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.extern.log4j.Log4j;
-
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.common.collect.Sets;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.internal.StringMap;
+
+import lombok.extern.log4j.Log4j;
 
 @Log4j
-@SuppressWarnings("rawtypes")
-public class ESProvider implements DocumentProvider, Closeable {
+public class ESJoinedProvider implements DocumentProvider {
 
-	private final JestClient client;
+	private final Node node;
+	private final Client client;
 	private final QueryBuilder qbuilder;
 	private final int start;
 	private final int total;
@@ -48,20 +45,15 @@ public class ESProvider implements DocumentProvider, Closeable {
 	}
 
 	private static DocumentProvider instance(QueryBuilder qbuilder, int start, int total) {
-		ClientConfig conf = new ClientConfig();
-		LinkedHashSet<String> set = new LinkedHashSet<String>();
-		set.add("http://localhost:9200");
-		conf.getServerProperties().put(ClientConstants.SERVER_LIST, set);
+		Node node = (new NodeBuilder().client(true).clusterName("elasticsearch_mainec_sandbox")).node();
 		
-		JestClientFactory factory = new JestClientFactory();
-		factory.setClientConfig(conf);
-		JestClient client = factory.getObject();
-
-		return new ESProvider(client, qbuilder, start, total); 
+		Client client = node.client();
+		return new ESJoinedProvider(client, node, qbuilder, start, total); 
 	}
 	
-	private ESProvider(JestClient client, QueryBuilder qbuilder, int start, int total) {
+	private ESJoinedProvider(Client client, Node node, QueryBuilder qbuilder, int start, int total) {
 		this.client = client;
+		this.node = node;
 		this.start = start;
 		this.total = total;
 		this.qbuilder = qbuilder;
@@ -69,7 +61,7 @@ public class ESProvider implements DocumentProvider, Closeable {
 	
 	public void close() {
 		try {
-			this.client.shutdownClient();
+			node.close();
 		} catch (Throwable t) {
 			log.error("Unable to close JestClient ", t);
 		}
@@ -77,44 +69,37 @@ public class ESProvider implements DocumentProvider, Closeable {
 	
 	@Override
 	public Iterator<Document> iterator() {
-		Search search = new Search(Search.createQueryWithBuilder(qbuilder.toString()));
-		search.addParameter("from", start);
-		search.addParameter("size", total); 
-		search.addIndex("sof-sample");
-		JestResult result;
-		try {
-			result = client.execute(search);
-		} catch (Exception e) {
-			return new ESDocumentIterator(new HashMap<String, StringMap>());
-		}
-		ESDocumentIterator iter = new ESDocumentIterator(result.getJsonMap());
-		return iter;
+		SearchResponse response = client.prepareSearch("sof-sample")
+		        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+		        .setQuery(qbuilder)
+		        .setFrom(start).setSize(total)
+		        .execute()
+		        .actionGet();
+		return new ESDocumentIterator(response.getHits());
 	}
 	
 	private class ESDocumentIterator implements Iterator<Document> {
 
-		private ArrayList<StringMap> hits;
+		private SearchHit[] hits;
 		private int cursor = -1;
 		private Document parsed;
 
 		@SuppressWarnings("unchecked")
-		public ESDocumentIterator(Map<String, StringMap> result) {
-			Preconditions.checkNotNull(result);
+		public ESDocumentIterator(SearchHits hits) {
+			Preconditions.checkNotNull(hits);
 
-			if (result.isEmpty()) {
-				this.hits = new ArrayList<StringMap>();
+			if (hits.getHits().length == 0) {
+				this.hits = new SearchHit[0];
 			} else {
-				StringMap obj_1 = (StringMap) result.get("hits");
-				if (obj_1 == null) 	System.out.println(result);
-				hits = (ArrayList) obj_1.get("hits");
+				this.hits = hits.getHits();
 			}
 		}
 
 		private synchronized Document parse() {
-			if ( (cursor + 1) < hits.size()) {
+			if ( (cursor + 1) < hits.length) {
 				cursor++;
-				StringMap entry = hits.get(cursor);
-				StringMap srcDoc = (StringMap) entry.get("_source");
+				SearchHit entry = hits[cursor];
+				Map<String, Object> srcDoc = entry.getSource();
 
 				String body = (String) srcDoc.get("body");
 				String title = (String) srcDoc.get("title");
@@ -164,5 +149,6 @@ public class ESProvider implements DocumentProvider, Closeable {
 		}
 		
 	}
+
 
 }

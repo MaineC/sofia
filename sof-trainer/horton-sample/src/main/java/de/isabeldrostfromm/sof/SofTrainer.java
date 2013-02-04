@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.util.Version;
@@ -19,15 +18,11 @@ import org.apache.mahout.vectorizer.encoders.LuceneTextValueEncoder;
 import org.elasticsearch.common.Strings;
 
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 
 import de.isabeldrostfromm.sof.util.Vectors;
 
 public class SofTrainer {
-
-	private static final int numTest = 50;
-	
 	private static final int bodyCard = 1000000;
 	private static final int titleCard = 1000000;
 	private static final int tagCard = 200;
@@ -37,19 +32,20 @@ public class SofTrainer {
 	private static final HashMap<String, Integer> states = new HashMap<String, Integer>();
 	private static final String[] stateValues = {"open", "not_a_real_question", "not_constructive", "off_topic", "too_localized"};
 
-	private static final int numTrain = 550 * stateValues.length;			
+	private static final int numTrain = 50 * stateValues.length;			
+	private static final int numTest = 50;
 	
 	public static void main (String args[]) throws Exception {
-		OnlineLogisticRegression logReg = new OnlineLogisticRegression(stateValues.length, bodyCard + titleCard + tagCard + doubles, new L1());
-
 		for (int i = 0; i < stateValues.length; i++)
 			states.put(stateValues[i], new Integer(i));
 
-		DocumentProvider train = ESProvider.pagedInstance(field, "invalid_status_string", 0, numTrain);
+		OnlineLogisticRegression logReg = new OnlineLogisticRegression(stateValues.length, bodyCard + titleCard + tagCard + doubles, new L1());
+
+		DocumentProvider train = ESJoinedProvider.negatedFilterInstance(field, "invalid_status_string", 0, numTrain);
 		train(logReg, train);
 		
 		for (int i = 0; i < stateValues.length; i++) {
-			DocumentProvider test = ESProvider.pagedInstance(field, stateValues[i], numTrain, numTest);
+			DocumentProvider test = ESJoinedProvider.filterInstance(field, stateValues[i], numTrain, numTest);
 			test(logReg, test);
 		}
 		storeModel(logReg);	
@@ -101,14 +97,18 @@ public class SofTrainer {
 			DocumentProvider negativeTest) {
 		int total = 0;
 		int found = 0;
+		String target = "";
 		for (Document document : negativeTest) {
+			target = document.getState();
 			Vector instance = vectorise(document);
 			Vector result = logReg.classify(instance);
 			total++;
-			if (result.get(states.get(document.getState())) > 0) 
+			int index = states.get(document.getState());
+			if (index < (result.size() -1)
+					&& result.get(states.get(document.getState())) > 0) 
 				found++;
 		}
-		System.out.println("Of " + total + " we found " + found + " instances.");
+		System.out.println("Of " + total + " we found " + found + " instances for label " + target);
 	}
 	
 }
