@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>de.isabeldrostfromm</groupId>
-  <artifactId>horton-sample</artifactId>
+  <artifactId>sofia</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>horton-sample</name>
+  <name>sofia</name>
   <url>http://maven.apache.org</url>
 
   <properties>
