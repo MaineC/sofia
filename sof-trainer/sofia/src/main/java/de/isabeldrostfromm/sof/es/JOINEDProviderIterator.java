@@ -1,4 +1,4 @@
-package de.isabeldrostfromm.sof;
+package de.isabeldrostfromm.sof.es;
 
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +8,9 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 
 import com.google.common.base.Preconditions;
+
+import de.isabeldrostfromm.sof.Document;
+import de.isabeldrostfromm.sof.ProviderIterator;
 
 /**
  * Iterator for ES results as returned by the Java API.

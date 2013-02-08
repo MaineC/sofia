@@ -1,4 +1,4 @@
-package de.isabeldrostfromm.sof;
+package de.isabeldrostfromm.sof.es;
 
 import java.util.Iterator;
 
@@ -9,6 +9,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+
+import de.isabeldrostfromm.sof.Document;
+import de.isabeldrostfromm.sof.DocumentProvider;
 
 import lombok.extern.log4j.Log4j;
 

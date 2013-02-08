@@ -1,4 +1,4 @@
-package de.isabeldrostfromm.sof;
+package de.isabeldrostfromm.sof.es;
 
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
@@ -18,6 +18,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.google.gson.internal.StringMap;
+
+import de.isabeldrostfromm.sof.Document;
+import de.isabeldrostfromm.sof.DocumentProvider;
 
 /**
  * Provides query capabilities through the ES REST interface.

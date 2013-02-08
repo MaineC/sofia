@@ -20,6 +20,7 @@ import org.elasticsearch.common.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
+import de.isabeldrostfromm.sof.es.RESTProvider;
 import de.isabeldrostfromm.sof.util.Vectors;
 
 /**
