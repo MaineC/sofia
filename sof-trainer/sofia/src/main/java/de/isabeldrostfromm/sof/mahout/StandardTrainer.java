@@ -10,6 +10,7 @@ import java.util.HashMap;
 import org.apache.mahout.classifier.sgd.L1;
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 import org.apache.mahout.math.Vector;
+import org.apache.mahout.vectorizer.encoders.LuceneTextValueEncoder;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -17,6 +18,11 @@ import com.google.common.collect.Multiset;
 import de.isabeldrostfromm.sof.Document;
 import de.isabeldrostfromm.sof.DocumentProvider;
 
+/**
+ * Implements training an {@link OnlineLogisticRegression} model based on
+ * a document turning all text into vector fractions via the {@link LuceneTextValueEncoder}
+ * provided by Mahout
+ * */
 public class StandardTrainer implements ModelTrainer {
 
 	/** Possible prediction results */

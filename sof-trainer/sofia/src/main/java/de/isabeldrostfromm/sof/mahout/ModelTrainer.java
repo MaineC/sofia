@@ -6,6 +6,11 @@ import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 
 import de.isabeldrostfromm.sof.DocumentProvider;
 
+/**
+ * Classes implementing this interface encapsulate training a classification
+ * model and using it for predicting document labels as well as storing
+ * the model on disk.
+ * */
 public interface ModelTrainer {
 	/**
 	 * Given a document provider train a model.
