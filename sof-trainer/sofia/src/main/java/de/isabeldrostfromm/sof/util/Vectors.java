@@ -4,6 +4,12 @@ import org.apache.mahout.math.SequentialAccessSparseVector;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.math.Vector.Element;
 
+/**
+ * Inspired by the Arrays, Collections etc. classes this class provides
+ * common utitilities to deal with Mahout vectors.
+ * 
+ * TODO tests missing
+ * */
 public class Vectors {
 	
 	/**
