@@ -10,7 +10,6 @@ import org.elasticsearch.search.SearchHits;
 import com.google.common.base.Preconditions;
 
 import de.isabeldrostfromm.sof.Document;
-import de.isabeldrostfromm.sof.ProviderIterator;
 
 /**
  * Iterator for ES results as returned by the Java API.

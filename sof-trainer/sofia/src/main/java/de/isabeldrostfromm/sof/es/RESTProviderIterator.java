@@ -10,7 +10,6 @@ import com.google.common.base.Preconditions;
 import com.google.gson.internal.StringMap;
 
 import de.isabeldrostfromm.sof.Document;
-import de.isabeldrostfromm.sof.ProviderIterator;
 
 /**
  * Iterator for ES results as returned by the Java API.

@@ -1,6 +1,8 @@
-package de.isabeldrostfromm.sof;
+package de.isabeldrostfromm.sof.es;
 
 import java.util.Iterator;
+
+import de.isabeldrostfromm.sof.Document;
 
 /**
  * Iteration logic given a method that parses documents from an internal
