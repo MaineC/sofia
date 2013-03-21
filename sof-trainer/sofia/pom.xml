@@ -11,11 +11,11 @@
   <url>http://maven.apache.org</url>
 
   <!-- for potentially uploading to sonatype oss repo -->
-  <parent>
+  <!--parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
-  </parent>
+  </parent-->
  
   <properties>
     <house.keeping.base>${basedir}</house.keeping.base>
@@ -124,13 +124,6 @@
         </exclusions>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>sonatype</id>
-      <name>Sonatype Groups</name>
-      <url>https://oss.sonatype.org/content/groups/public</url>
-    </repository>
-  </repositories>
   <build>
     <plugins>
       <plugin>
@@ -145,7 +138,7 @@
        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.4</version>
         <executions>
           <execution>
             <goals>
@@ -167,8 +160,8 @@
       </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-remote-resources</artifactId>
-          <version>1.1</version>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.4</version>
        </plugin>
        <plugin>
         <artifactId>maven-source-plugin</artifactId>

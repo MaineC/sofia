@@ -1,0 +1,15 @@
+
+DICODE Analysis Framework
+Copyright 2010 Neofonie GmbH
+
+This product includes software developed by Neofonie GmbH (http://www.neofonie.de/).
+
+Includes software from other Apache Software Foundation projects,
+including, but not limited to:
+    - Apache Mahout
+    - Apache Lucene Java
+    - Apache Hadoop
+    - Apache Commons
+
+For further details on licenses of other libraries and projects used as part of this
+product please refer to the DEPENDENCIES file.
