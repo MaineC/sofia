@@ -11,8 +11,6 @@ import de.isabeldrostfromm.sof.mahout.StandardTrainer;
  *
  * TODO add tests
  * 
- * TODO factor Mahout vectorisation out of this class
- * 
  * TODO add some interaction features to deal with off_topic etc. states.
  * */
 public class SofTrainer {
