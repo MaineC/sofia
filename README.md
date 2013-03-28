@@ -25,9 +25,9 @@ like in a pure Hadoop setup w/o ES.
 Components
 ----------
 
-sof_es_poster.py ... Python script to read the SOF dump and post docs to ES
-config ... tracks the ES config used for the project
-sof_trainer ... Maven project for querying ES and training the classifier
+* sof_es_poster.py ... Python script to read the SOF dump and post docs to ES
+* config ... tracks the ES config used for the project
+* sof_trainer ... Maven project for querying ES and training the classifier
 
 System Requirements
 -------------------
