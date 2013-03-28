@@ -121,7 +121,7 @@ with open('../train-sample', 'rt') as csvfile:
     conn.index(document, "sof-sample", "sof-document", counter)
     counter = counter + 1
 
-conn.indices.refresh(sof-sample)
+conn.indices.refresh("sof-sample")
 
 q = TermQuery("title", "Elastic Search")
 results = conn.search(query = q)
