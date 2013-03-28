@@ -14,7 +14,9 @@ public class VectorsTest extends RandomizedTest {
 	public void testAppendOne() {
 		SequentialAccessSparseVector vec = randomVector();
 		Vector result = Vectors.append(vec);
-		assertEquals("Appending a single vector should result that same vector.", vec, result);
+		assertEquals("Appending a single vector should result that same vector.",
+				vec,
+				result);
 	}
 
 	@Test
@@ -25,7 +27,27 @@ public class VectorsTest extends RandomizedTest {
 		Vector result = Vectors.append(vecA, vecB);
 		double sum = Math.pow(vecA.norm(2), 2) + Math.pow(vecB.norm(2), 2);
 		double length = Math.sqrt(sum);
-		assertEquals("Appending two vectors should result in a vector of added length.", length, result.norm(2), 0.00001);
+		assertEquals("Appending two vectors should result in a vector of added length.",
+				length,
+				result.norm(2),
+				0.00001);
+	}
+	
+	@Test
+	@Repeat(iterations = 10)
+	public void testCreation() {
+		Vector vec = randomVector();
+		double[] entries = new double[vec.getNumNondefaultElements()];
+		int index = 0;
+		for (Vector.Element e : vec) {
+			entries[index] = e.get();
+			index++;
+		}
+		Vector result = Vectors.newSequentialAccessSparseVector(entries);
+		assertEquals("Original vector should have same length as the one created from its entries.",
+				vec.norm(2),
+				result.norm(2),
+				0.0001);
 	}
 
 	private SequentialAccessSparseVector randomVector() {
