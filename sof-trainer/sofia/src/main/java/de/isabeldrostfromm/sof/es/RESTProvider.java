@@ -106,6 +106,7 @@ public class RESTProvider implements DocumentProvider, Closeable {
 		Search search = new Search(Search.createQueryWithBuilder(qbuilder.toString()));
 		search.addParameter("from", start);
 		search.addParameter("size", total); 
+		search.addParameter("sort", "post_creation_date");
 		search.addIndex("sof-sample");
 		JestResult result;
 		try {
