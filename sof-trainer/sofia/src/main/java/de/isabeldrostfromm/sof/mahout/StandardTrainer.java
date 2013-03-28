@@ -38,12 +38,14 @@ import de.isabeldrostfromm.sof.DocumentProvider;
  * Implements training an {@link OnlineLogisticRegression} model based on
  * a document turning all text into vector fractions via the {@link LuceneTextValueEncoder}
  * provided by Mahout
+ * 
+ * TODO fix logging
  * */
 public class StandardTrainer implements ModelTrainer {
 
 	/** Possible prediction results */
 	public static final HashMap<String, Integer> STATES = new HashMap<String, Integer>();
-	public static final String[] STATEVALUES = {"open", "not_a_real_question", "not_constructive", "off_topic", "too_localized"};
+	public static final String[] STATEVALUES = {"open", "not a real question", "not constructive", "off topic", "too localized"};
 	static {
 		for (int i = 0; i < STATEVALUES.length; i++)
 			STATES.put(STATEVALUES[i], new Integer(i));
