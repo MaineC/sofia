@@ -40,6 +40,7 @@ import de.isabeldrostfromm.sof.DocumentProvider;
  * provided by Mahout
  * 
  * TODO fix logging
+ * TODO fix documentation
  * */
 public class StandardTrainer implements ModelTrainer {
 
