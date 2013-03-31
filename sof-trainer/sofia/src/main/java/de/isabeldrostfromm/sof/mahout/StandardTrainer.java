@@ -51,7 +51,7 @@ public class StandardTrainer implements ModelTrainer {
 		for (int i = 0; i < STATEVALUES.length; i++)
 			STATES.put(STATEVALUES[i], new Integer(i));
 	}
-	/** Vecoriser to turn documents in vectors. */
+	/** Vecoriser to turn documents into vectors. */
 	private final StandardVectoriser v = new StandardVectoriser();
 
 	@Override
