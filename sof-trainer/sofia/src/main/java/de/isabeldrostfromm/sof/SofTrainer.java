@@ -40,7 +40,6 @@ public class SofTrainer {
 	
 	/**
 	 * First run a round of training (currently on the top-k documents returned by ES - 
-	 * TODO switch to top-k according to reverse sorting by posting date
 	 * - resulting in an unbalanced training set wrt. to posting status).
 	 * 
 	 * Second run one round of testing and output testing results.
@@ -55,7 +54,7 @@ public class SofTrainer {
 
 		for (int i = 0; i < StandardTrainer.STATEVALUES.length; i++) {
 			DocumentProvider test = RESTProvider.filterInstance(field, StandardTrainer.STATEVALUES[i], numTrain, numTest);
-			trainer.test(model, test);
+			trainer.apply(model, test);
 		}
 
 		trainer.store(model);

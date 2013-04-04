@@ -17,6 +17,7 @@
 package de.isabeldrostfromm.sof.mahout;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 
@@ -38,8 +39,9 @@ public interface ModelTrainer {
 	/** Given a model and document provider test the model performance. 
 	 * @param model the model to test
 	 * @param provider the provider to take test documents from
+	 * @return a list representing the most likely labels for each of the documents provided
 	 **/
-	public void test(OnlineLogisticRegression model, DocumentProvider provider);
+	public List<String> apply(OnlineLogisticRegression model, DocumentProvider provider);
 	
 	/** Store the model to disk.
 	 * @throws IOException  in case storing model fails*/

@@ -21,7 +21,9 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.mahout.classifier.sgd.L1;
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
@@ -46,12 +48,15 @@ public class StandardTrainer implements ModelTrainer {
 
 	/** Possible prediction results */
 	public static final HashMap<String, Integer> STATES = new HashMap<String, Integer>();
+	public static final List<String> INDECES = new ArrayList<String>();
 	public static final String[] STATEVALUES = {"open", "not a real question", "not constructive", "off topic", "too localized"};
 	static {
-		for (int i = 0; i < STATEVALUES.length; i++)
+		for (int i = 0; i < STATEVALUES.length; i++) {
 			STATES.put(STATEVALUES[i], new Integer(i));
+			INDECES.add(STATEVALUES[i]);
+		}
 	}
-	/** Vecoriser to turn documents into vectors. */
+	/** Vectoriser to turn documents into vectors. */
 	private final StandardVectoriser v = new StandardVectoriser();
 
 	@Override
@@ -66,29 +71,26 @@ public class StandardTrainer implements ModelTrainer {
 			logReg.train(STATES.get(document.getState()), instance);
 		}
 
-		for (String key : set.elementSet()) {
-			System.out.println("Saw " + set.count(key) + " documents of type " + key);
-		}
-
 		return logReg;
 	}
 
 	@Override
-	public void test(OnlineLogisticRegression model, DocumentProvider provider) {
-		int total = 0;
-		int found = 0;
-		String target = "";
+	public List<String> apply(OnlineLogisticRegression model, DocumentProvider provider) {
+		List<String> result = new ArrayList<String>();
 		for (Document document : provider) {
-			target = document.getState();
 			Vector instance = v.vectorise(document);
-			Vector result = model.classify(instance);
-			total++;
-			int index = STATES.get(document.getState());
-			if (index < (result.size() -1)
-					&& result.get(STATES.get(document.getState())) > 0) 
-				found++;
+			Vector labeled = model.classify(instance);
+			double max = -1;
+			int maxIndex = -1;
+			for (Vector.Element element : labeled) {
+				if (element.get() > max) {
+					max = element.get();
+					maxIndex = element.index();
+				}
+			}
+			result.add(INDECES.get(maxIndex));
 		}
-		System.out.println("Of " + total + " we found " + found + " instances for label " + target);
+		return result;
 	}
 
 	@Override
