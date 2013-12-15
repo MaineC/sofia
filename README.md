@@ -39,3 +39,8 @@ System Requirements
 * Project Lombok installed into your IDE to build the code (integrated
   automatically for the maven based build)
 
+Data:
+
+Get from Kaggle:
+https://www.kaggle.com/c/predict-closed-questions-on-stack-overflow/data
+
