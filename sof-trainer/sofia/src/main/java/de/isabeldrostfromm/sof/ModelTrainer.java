@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.mahout;
+package de.isabeldrostfromm.sof;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 
-import de.isabeldrostfromm.sof.DocumentProvider;
 
 /**
  * Classes implementing this interface encapsulate training a classification
@@ -34,14 +33,14 @@ public interface ModelTrainer {
 	 *@param provider the provider of training documents
 	 *@return a trained model
 	 * */
-	public OnlineLogisticRegression train(DocumentProvider provider);
+	public OnlineLogisticRegression train(ExampleProvider provider);
 
 	/** Given a model and document provider test the model performance. 
 	 * @param model the model to test
 	 * @param provider the provider to take test documents from
 	 * @return a list representing the most likely labels for each of the documents provided
 	 **/
-	public List<String> apply(OnlineLogisticRegression model, DocumentProvider provider);
+	public List<String> apply(OnlineLogisticRegression model, ExampleProvider provider);
 	
 	/** Store the model to disk.
 	 * @throws IOException  in case storing model fails*/

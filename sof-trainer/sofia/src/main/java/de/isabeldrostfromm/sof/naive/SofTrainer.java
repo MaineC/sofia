@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof;
+package de.isabeldrostfromm.sof.naive;
 
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 
-import de.isabeldrostfromm.sof.es.RESTProvider;
-import de.isabeldrostfromm.sof.mahout.ModelTrainer;
-import de.isabeldrostfromm.sof.mahout.StandardTrainer;
+import de.isabeldrostfromm.sof.ExampleProvider;
+import de.isabeldrostfromm.sof.ModelTargets;
+import de.isabeldrostfromm.sof.ModelTrainer;
+import de.isabeldrostfromm.sof.Trainer;
 
 /**
  * Utility to start training and testing in one go. Demonstrates document vectorisation with Mahout
@@ -34,7 +35,7 @@ public class SofTrainer {
 	/** Field to predict */
 	private static final String field = "open_status";
 	/** Number of training examples to use */
-	private static final int numTrain = 50 * StandardTrainer.STATEVALUES.length;	
+	private static final int numTrain = 50 * ModelTargets.STATEVALUES.length;	
 	/** Number of examples to use for testing */
 	private static final int numTest = 50;
 	
@@ -47,13 +48,13 @@ public class SofTrainer {
 	 * Third store the resulting model in /tmp.
 	 * */
 	public static void main (String args[]) throws Exception {
-		ModelTrainer trainer = new StandardTrainer();
+		ModelTrainer trainer = new Trainer();
 
-		DocumentProvider train = RESTProvider.negatedFilterInstance(field, "invalid_status_string", 0, numTrain);
+		ExampleProvider train = RESTProvider.negatedFilterInstance(field, "invalid_status_string", 0, numTrain);
 		OnlineLogisticRegression model = trainer.train(train);
 
-		for (int i = 0; i < StandardTrainer.STATEVALUES.length; i++) {
-			DocumentProvider test = RESTProvider.filterInstance(field, StandardTrainer.STATEVALUES[i], numTrain, numTest);
+		for (int i = 0; i < ModelTargets.STATEVALUES.length; i++) {
+			ExampleProvider test = RESTProvider.filterInstance(field, ModelTargets.STATEVALUES[i], numTrain, numTest);
 			trainer.apply(model, test);
 		}
 

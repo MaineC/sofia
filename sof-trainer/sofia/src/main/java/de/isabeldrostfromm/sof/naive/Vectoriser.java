@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.mahout;
+package de.isabeldrostfromm.sof.naive;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.util.Version;
@@ -23,13 +23,12 @@ import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.LuceneTextValueEncoder;
 import org.elasticsearch.common.Strings;
 
-import de.isabeldrostfromm.sof.Document;
 import de.isabeldrostfromm.sof.util.Vectors;
 
 /**
  * Vectorisation based on LuceneTextValueEncoder for body, title and tags.
  * */
-public class StandardVectoriser implements DocumentVectoriser {
+public class Vectoriser {
 	/** Cardinality of the vector portion to use for encoding posting bodies. */
 	private static final int bodyCard = 1000000;
 	/** Cardinality of the vector portion to use for encoding posting titles. */
@@ -49,7 +48,6 @@ public class StandardVectoriser implements DocumentVectoriser {
 	 * @param document the document to turn in a vector.
 	 * @return the resulting vector.
 	 * */
-	@Override
 	public Vector vectorise(Document document) {
 		Vector body = luceneEncode(bodyCard, document.getBody());
 		Vector title = luceneEncode(titleCard, document.getTitle());

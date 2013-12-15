@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.mahout;
+package de.isabeldrostfromm.sof;
 
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.mahout.classifier.sgd.L1;
@@ -33,8 +32,7 @@ import org.apache.mahout.vectorizer.encoders.LuceneTextValueEncoder;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
-import de.isabeldrostfromm.sof.Document;
-import de.isabeldrostfromm.sof.DocumentProvider;
+import de.isabeldrostfromm.sof.naive.Vectoriser;
 
 /**
  * Implements training an {@link OnlineLogisticRegression} model based on
@@ -44,42 +42,27 @@ import de.isabeldrostfromm.sof.DocumentProvider;
  * TODO fix logging
  * TODO fix documentation
  * */
-public class StandardTrainer implements ModelTrainer {
+public class Trainer implements ModelTrainer {
 
-	/** Possible prediction results */
-	public static final HashMap<String, Integer> STATES = new HashMap<String, Integer>();
-	public static final List<String> INDECES = new ArrayList<String>();
-	public static final String[] STATEVALUES = {"open", "not a real question", "not constructive", "off topic", "too localized"};
-	static {
-		for (int i = 0; i < STATEVALUES.length; i++) {
-			STATES.put(STATEVALUES[i], new Integer(i));
-			INDECES.add(STATEVALUES[i]);
-		}
-	}
-	/** Vectoriser to turn documents into vectors. */
-	private final StandardVectoriser v = new StandardVectoriser();
-
-	@Override
-	public OnlineLogisticRegression train(DocumentProvider provider) {
+    @Override
+	public OnlineLogisticRegression train(ExampleProvider provider) {
 		OnlineLogisticRegression logReg = new OnlineLogisticRegression(
-				STATEVALUES.length, StandardVectoriser.getCardinality(), new L1());
+				ModelTargets.STATEVALUES.length, Vectoriser.getCardinality(), new L1());
 
 		Multiset<String> set = HashMultiset.create();
-		for (Document document : provider) {
-			set.add(document.getState());
-			Vector instance = v.vectorise(document);  
-			logReg.train(STATES.get(document.getState()), instance);
+		for (Example instance : provider) {
+			set.add(instance.getState());
+			logReg.train(ModelTargets.STATES.get(instance.getState()), instance.getVector());
 		}
 
 		return logReg;
 	}
 
 	@Override
-	public List<String> apply(OnlineLogisticRegression model, DocumentProvider provider) {
+	public List<String> apply(OnlineLogisticRegression model, ExampleProvider provider) {
 		List<String> result = new ArrayList<String>();
-		for (Document document : provider) {
-			Vector instance = v.vectorise(document);
-			Vector labeled = model.classify(instance);
+		for (Example instance : provider) {
+			Vector labeled = model.classify(instance.getVector());
 			double max = -1;
 			int maxIndex = -1;
 			for (Vector.Element element : labeled) {
@@ -88,7 +71,7 @@ public class StandardTrainer implements ModelTrainer {
 					maxIndex = element.index();
 				}
 			}
-			result.add(INDECES.get(maxIndex));
+			result.add(ModelTargets.INDECES.get(maxIndex));
 		}
 		return result;
 	}

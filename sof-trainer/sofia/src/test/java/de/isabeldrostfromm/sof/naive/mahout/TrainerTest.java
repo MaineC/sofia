@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.mahout;
+package de.isabeldrostfromm.sof.naive.mahout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,28 +29,33 @@ import com.carrotsearch.randomizedtesting.RandomizedTest;
 import com.carrotsearch.randomizedtesting.annotations.Repeat;
 import com.google.common.collect.Sets;
 
-import de.isabeldrostfromm.sof.Document;
-import de.isabeldrostfromm.sof.DocumentProvider;
+import de.isabeldrostfromm.sof.Example;
+import de.isabeldrostfromm.sof.ExampleProvider;
+import de.isabeldrostfromm.sof.ModelTargets;
+import de.isabeldrostfromm.sof.Trainer;
+import de.isabeldrostfromm.sof.naive.Document;
+import de.isabeldrostfromm.sof.naive.Vectoriser;
 
-public class StandardTrainerTest extends RandomizedTest {
+public class TrainerTest extends RandomizedTest {
 
-	private final StandardTrainer trainer = new StandardTrainer();
+	private final Trainer trainer = new Trainer();
+	private final Vectoriser v = new Vectoriser();
 
 	// TODO make test more meaningful - only works for first category right now.
 	@Test
 	@Repeat(iterations = 10)
 	public void testTestingOnTraining() {
-		ArrayList<Document> docs = new ArrayList<Document>();
+		ArrayList<Example> docs = new ArrayList<Example>();
 		ArrayList<String> states = new ArrayList<String>();
-		for (int i = 0; i < StandardTrainer.INDECES.size(); i++) {
+		for (int i = 0; i < ModelTargets.INDECES.size(); i++) {
 			String body = randomText(3, 20, 20, 100);
-			String state = StandardTrainer.INDECES.get(0);
+			String state = ModelTargets.INDECES.get(0);
 			Document doc = Document.of(body, state, "", 0.0, Sets.newHashSet(""));
-			docs.add(doc);
+			docs.add(Example.of(v.vectorise(doc), doc.getState()));
 			states.add(state);
 		}
 
-		DocumentProvider provider = new MockProvider(docs);
+		ExampleProvider provider = new MockProvider(docs);
 		OnlineLogisticRegression model = trainer.train(provider);
 		List<String> result = trainer.apply(model, provider);
 		for (int i = 0; i < states.size(); i++) {
@@ -60,16 +65,16 @@ public class StandardTrainerTest extends RandomizedTest {
 		}
 	}
 
-	private class MockProvider implements DocumentProvider {
+	private class MockProvider implements ExampleProvider {
 
-		private Collection<Document> docs;
+		private Collection<Example> docs;
 
-		public MockProvider(Collection<Document> docs) {
+		public MockProvider(Collection<Example> docs) {
 			this.docs = docs;
 		}
 
 		@Override
-		public Iterator<Document> iterator() {
+		public Iterator<Example> iterator() {
 			return docs.iterator();
 		}
 

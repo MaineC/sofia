@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 /**
- * Contains all classes need for document vectorisation and model training.
+ * Package for training and testing a classifier based on documents provided by
+ * an ES backend.
+ * 
+ * This is to demo the classification API.
  */
-package de.isabeldrostfromm.sof.mahout;
+package de.isabeldrostfromm.sof.naive;

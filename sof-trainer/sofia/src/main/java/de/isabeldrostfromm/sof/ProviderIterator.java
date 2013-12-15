@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.es;
+package de.isabeldrostfromm.sof;
 
 import java.util.Iterator;
 
-import de.isabeldrostfromm.sof.Document;
 
 /**
  * Iteration logic given a method that parses documents from an internal
  * document provider.
  * */
-public abstract class ProviderIterator implements Iterator<Document> {
+public abstract class ProviderIterator implements Iterator<Example> {
 
-	protected Document parsed;
-	
-	protected abstract Document parse();
+	protected Example parsed;
+	protected abstract Example parse();
 
 	@Override
 	public boolean hasNext() {
@@ -44,11 +42,11 @@ public abstract class ProviderIterator implements Iterator<Document> {
 	}
 
 	@Override
-	public Document next() {
+	public Example next() {
 		if (this.parsed == null) {
 			this.parsed = parse();
 		}
-		Document current = this.parsed;
+		Example current = this.parsed;
 		this.parsed = null;
 		return current;
 	}

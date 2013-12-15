@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.es;
+package de.isabeldrostfromm.sof.naive;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,7 +25,8 @@ import org.elasticsearch.common.collect.Sets;
 import com.google.common.base.Preconditions;
 import com.google.gson.internal.StringMap;
 
-import de.isabeldrostfromm.sof.Document;
+import de.isabeldrostfromm.sof.Example;
+import de.isabeldrostfromm.sof.ProviderIterator;
 
 /**
  * Iterator for ES results as returned by the Java API.
@@ -49,6 +50,7 @@ public class RESTProviderIterator extends ProviderIterator {
 	@SuppressWarnings("rawtypes")
 	private ArrayList<StringMap> hits;
 	private int cursor = -1;
+	private Vectoriser v = new Vectoriser();
 
 	@SuppressWarnings("rawtypes")
 	public RESTProviderIterator(Map<String, StringMap> result) {
@@ -64,7 +66,7 @@ public class RESTProviderIterator extends ProviderIterator {
 	}
 
 	@Override
-	protected Document parse() {
+	protected Example parse() {
 		if ( (cursor + 1) < hits.size()) {
 			cursor++;
 			@SuppressWarnings("rawtypes")
@@ -85,8 +87,7 @@ public class RESTProviderIterator extends ProviderIterator {
 			Set<String> tags = Sets.newHashSet(tag1, tag2, tag3, tag4, tag5);
 			
 			String state = (String) srcDoc.get("open_status");
-			return Document.of(body, state, title, reputation, tags);
-			
+			return Example.of(v.vectorise(Document.of(body, state, title, reputation, tags)), state);
 		}
 		return null;
 	}

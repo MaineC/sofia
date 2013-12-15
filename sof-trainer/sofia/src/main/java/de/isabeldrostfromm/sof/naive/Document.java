@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof;
+package de.isabeldrostfromm.sof.naive;
 
 import java.util.Set;
 

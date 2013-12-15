@@ -14,8 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.isabeldrostfromm.sof;
+
+import java.io.Closeable;
+
+
 /**
- * Package contains both, rest and java api based ElasticSearch connectors to
- * act as DocumentProviders for the demo.
- */
-package de.isabeldrostfromm.sof.es;
+ * Implement this interface in order to provide an implementation for
+ * another document provider backend other than the ES REST and ES Java
+ * API backends.
+ * */
+public interface ExampleProvider extends Iterable<Example>, Closeable {
+
+}

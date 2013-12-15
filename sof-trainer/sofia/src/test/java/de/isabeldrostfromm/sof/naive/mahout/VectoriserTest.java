@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.isabeldrostfromm.sof.mahout;
+package de.isabeldrostfromm.sof.naive.mahout;
 
 import java.io.IOException;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,13 +28,14 @@ import com.carrotsearch.randomizedtesting.RandomizedTest;
 import com.carrotsearch.randomizedtesting.annotations.Repeat;
 import com.google.common.collect.Sets;
 
-import de.isabeldrostfromm.sof.Document;
+import de.isabeldrostfromm.sof.naive.Document;
+import de.isabeldrostfromm.sof.naive.Vectoriser;
 
-public class StandardVectoriserTest extends RandomizedTest {
+public class VectoriserTest extends RandomizedTest {
 
 	@Test
 	public void testBodyVectorisation() {
-		DocumentVectoriser vectorise = new StandardVectoriser();
+		Vectoriser vectorise = new Vectoriser();
 		Document doc = Document.of("first", "", "", 0.0, new HashSet<String>());
 		Vector vec = vectorise.vectorise(doc);
 		assertEquals("Adding one term should result in two dimensions set to one.",
@@ -44,7 +46,7 @@ public class StandardVectoriserTest extends RandomizedTest {
 
 	@Test
 	public void testBodySingleWord() {
-		DocumentVectoriser vectorise = new StandardVectoriser();
+		Vectoriser vectorise = new Vectoriser();
 		Document doc = Document.of("first", "", "", 0.0, new HashSet<String>());
 		Vector first = vectorise.vectorise(doc);
 		Vector second = vectorise.vectorise(doc);
@@ -56,7 +58,7 @@ public class StandardVectoriserTest extends RandomizedTest {
 
 	@Test
 	public void testBodySingleDifferentWord() {
-		DocumentVectoriser vectorise = new StandardVectoriser();
+	    Vectoriser vectorise = new Vectoriser();
 		Document firstDoc = Document.of("first", "", "", 0.0, new HashSet<String>());
 		Document secondDoc = Document.of("second", "", "", 0.0, new HashSet<String>());
 		Vector first = vectorise.vectorise(firstDoc);
@@ -69,7 +71,7 @@ public class StandardVectoriserTest extends RandomizedTest {
 
 	@Test
 	public void testBodyVectorisation2Terms() {
-		DocumentVectoriser vectorise = new StandardVectoriser();
+		Vectoriser vectorise = new Vectoriser();
 		Document doc = Document.of("first second", "", "", 0.0, new HashSet<String>());
 		Vector vec = vectorise.vectorise(doc);
 		assertEquals("Adding one term should result in two dimensions set to one.",
@@ -93,7 +95,7 @@ public class StandardVectoriserTest extends RandomizedTest {
 		
 		Document firstDoc = Document.of(firstBody, "", title, reputation, tags);
 		Document secondDoc = Document.of(secondBody, "", title, reputation, tags);
-		DocumentVectoriser vectorise = new StandardVectoriser();
+		Vectoriser vectorise = new Vectoriser();
 		Vector first = vectorise.vectorise(firstDoc);
 		Vector second = vectorise.vectorise(secondDoc);
 
@@ -123,7 +125,7 @@ public class StandardVectoriserTest extends RandomizedTest {
 		Document firstDoc = Document.of(body, "first", title, reputation, tags);
 		Document secondDoc = Document.of(body, "second", title, reputation, tags);
 		
-		DocumentVectoriser vectorise = new StandardVectoriser();
+		Vectoriser vectorise = new Vectoriser();
 		Vector first = vectorise.vectorise(firstDoc);
 		Vector second = vectorise.vectorise(secondDoc);
 		assertEquals("The state field should not be taken into consideration when creating vectors.",
