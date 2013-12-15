@@ -50,37 +50,44 @@ mapping = {
 	'boost': 1.0,
 	'index': 'analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector': 'yes',},
     'body': {
 	'boost': 1.0,
 	'index': 'analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector':'yes'},
     'tag_1': {
 	'boost': 1.0,
 	'index': 'not_analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector': 'yes',},
     'tag_2': {
 	'boost': 1.0,
 	'index': 'not_analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector': 'yes',},
     'tag_3': {
 	'boost': 1.0,
 	'index': 'not_analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector': 'yes',},
     'tag_4': {
 	'boost': 1.0,
 	'index': 'not_analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector': 'yes',},
     'tag_5': {
 	'boost': 1.0,
 	'index': 'not_analyzed',
 	'store': 'yes',
-	'type': 'string'},
+	'type': 'string',
+        'term_vector': 'yes',},
     'post_closed_date': {
 	'boost': 1.0,
 	'index': 'not_analyzed',
@@ -95,7 +102,7 @@ conn.indices.put_mapping("sof-document", {'properties':mapping}, ["sof-sample"])
 
 # index documents
 counter = 1
-with open('../train-sample', 'rt') as csvfile:
+with open('train-sample.csv', 'rt') as csvfile:
   sofreader = csv.reader(csvfile, delimiter=',', quotechar='"')
   for row in sofreader:
     [post_id, post_creation_date, owner_user_id, owner_creation_date, reputation_at_post_creation, owner_undeleted_answer_count_at_post_time, title, body, tag_1, tag_2, tag_3, tag_4, tag_5, post_closed_date, open_status] = row;
